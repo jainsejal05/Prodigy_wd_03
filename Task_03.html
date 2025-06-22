@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            text-align: center;
+            padding: 30px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 16px;
+            margin: 30px auto;
+            width: max-content;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            border: 2px solid #4b6cb7;
+            font-size: 3.5em;
+            font-weight: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .status {
+            font-size: 1.7em;
+            margin-top: 20px;
+            min-height: 1.5em;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.3em;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board"></div>
+    <div class="status" id="status">Player X's turn</div>
+    <button onclick="resetGame()">Restart</button>
+    <script>
+        const boardElement = document.getElementById('board');
+        const statusElement = document.getElementById('status');
+        let board = ["", "", "", "", "", "", "", "", ""];
+        let currPlayer = "X";
+        let gameActive = true;
+
+        const winCondition = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8],
+            [2, 4, 6]];
+
+        function renderBoard() {
+            boardElement.innerHTML = "";
+            board.forEach((value, index) => {
+                const cell = document.createElement('div');
+                cell.className = "cell";
+                cell.textContent = value;
+                cell.addEventListener('click', () => handleClick(index));
+                boardElement.appendChild(cell);
+            });
+        }
+
+        function handleClick(index) {
+            if (!gameActive || board[index] !== "") return;
+
+            board[index] = currPlayer;
+            renderBoard();
+            checkWinner();
+            if (gameActive) {
+                currPlayer = currPlayer === "X" ? "O" : "X";
+                statusElement.textContent = `Player ${currPlayer}'s turn`;
+            }
+        }
+
+        function checkWinner() {
+            for (let condition of winCondition) {
+                const [a, b, c] = condition;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    statusElement.textContent = `Player ${board[a]} wins!!`;
+                    gameActive = false;
+                    setTimeout(resetGame, 2500);
+                    return;
+                }
+            }
+
+            if (!board.includes("")) {
+                statusElement.textContent = "It's a draw!!";
+                gameActive = false;
+                setTimeout(resetGame, 2500);
+            }
+        }
+
+        function resetGame() {
+            board = ["", "", "", "", "", "", "", "", ""];
+            currPlayer = "X";
+            gameActive = true;
+            statusElement.textContent = "Player X's turn";
+            renderBoard();
+        }
+        renderBoard();
+    </script>
+</body>
+</html>
